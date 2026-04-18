@@ -30,6 +30,63 @@ kubectl -n argocd annotate secret <cluster-secret-name> argocd.argoproj.io/skip-
 
 See [Declarative Setup - Skipping Cluster Reconciliation](./declarative-setup.md#skipping-cluster-reconciliation) for details.
 
+## Managing cluster annotations
+
+You can attach arbitrary key/value annotations to a cluster using `argocd cluster set`.
+The syntax matches `kubectl annotate`: use `key=value` to add or update an annotation,
+and append `-` to a key to remove it.
+
+### Adding annotations
+
+```bash
+argocd cluster set my-cluster --annotation team=platform --annotation env=production
+```
+
+Verify with:
+
+```bash
+argocd cluster get my-cluster -o yaml
+```
+
+```yaml
+annotations:
+  env: production
+  team: platform
+name: my-cluster
+server: https://my-cluster.example.com
+...
+```
+
+### Removing an annotation
+
+Append `-` to the annotation key to remove it, the same way `kubectl annotate` works:
+
+```bash
+argocd cluster set my-cluster --annotation env-
+```
+
+The annotation is gone from the next `get`:
+
+```bash
+argocd cluster get my-cluster -o yaml
+```
+
+```yaml
+annotations:
+  team: platform
+name: my-cluster
+server: https://my-cluster.example.com
+...
+```
+
+> [!NOTE]
+> Multiple `--annotation` flags can be combined in a single call. You can add some
+> keys and remove others at the same time:
+>
+> ```bash
+> argocd cluster set my-cluster --annotation env- --annotation tier=backend
+> ```
+
 ## Removing a cluster
 
 Run `argocd cluster rm context-name`.

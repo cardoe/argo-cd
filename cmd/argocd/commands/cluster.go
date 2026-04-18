@@ -244,7 +244,13 @@ func NewClusterSetCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command
 		Short: "Set cluster information",
 		Example: `  # Set cluster information
   argocd cluster set CLUSTER_NAME --name new-cluster-name --namespace '*'
-  argocd cluster set CLUSTER_NAME --name new-cluster-name --namespace namespace-one --namespace namespace-two`,
+  argocd cluster set CLUSTER_NAME --name new-cluster-name --namespace namespace-one --namespace namespace-two
+
+  # Add annotations to a cluster
+  argocd cluster set CLUSTER_NAME --annotation team=platform --annotation env=production
+
+  # Remove an annotation from a cluster (append - to the key, as with kubectl annotate)
+  argocd cluster set CLUSTER_NAME --annotation env-`,
 		Run: func(c *cobra.Command, args []string) {
 			ctx := c.Context()
 			if len(args) != 1 {
